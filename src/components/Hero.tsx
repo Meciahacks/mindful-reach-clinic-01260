@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-image.jpg";
 import logo from "@/assets/logo.png";
+import { useParallax } from "@/hooks/useParallax";
 
 const Hero = () => {
+  const parallaxOffset = useParallax(0.5);
+  
   const scrollToContact = () => {
     const element = document.getElementById('contact');
     if (element) {
@@ -20,8 +23,11 @@ const Hero = () => {
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-100 ease-out"
+        style={{ 
+          backgroundImage: `url(${heroImage})`,
+          transform: `translateY(${parallaxOffset}px)`
+        }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-primary/50 via-background/70 to-secondary/40 backdrop-blur-sm animate-shimmer" 
              style={{ backgroundSize: "200% 200%" }} />

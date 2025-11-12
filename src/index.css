@@ -108,5 +108,11 @@ All colors MUST be HSL.
   
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 64px; /* Account for fixed navigation */
+  }
+  
+  /* Smooth momentum scrolling for iOS */
+  * {
+    -webkit-overflow-scrolling: touch;
   }
 }

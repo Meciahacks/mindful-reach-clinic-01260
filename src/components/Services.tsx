@@ -1,7 +1,10 @@
 import { Video, MessageCircle, UserCheck, Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useParallax } from "@/hooks/useParallax";
 
 const Services = () => {
+  const parallaxOffset = useParallax(0.2);
+  
   const services = [
     {
       icon: Video,
@@ -26,8 +29,13 @@ const Services = () => {
   ];
 
   return (
-    <section id="services" className="py-20">
-      <div className="container mx-auto px-4">
+    <section id="services" className="py-20 relative overflow-hidden">
+      {/* Parallax background decoration */}
+      <div 
+        className="absolute top-1/4 right-0 w-72 h-72 bg-gradient-to-bl from-accent/10 to-transparent rounded-full blur-3xl"
+        style={{ transform: `translateY(${parallaxOffset * 0.8}px)` }}
+      />
+      <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">How We Help</h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
