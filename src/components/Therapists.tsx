@@ -48,12 +48,12 @@ const Therapists = () => {
           {therapists.map((therapist, index) => (
             <Card
               key={index}
-              className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-fade-in"
+              className="hover:shadow-[0_0_40px_rgba(79,209,197,0.3)] transition-all duration-300 hover:-translate-y-2 animate-scale-in border-2 hover:border-primary/50 group"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <CardHeader className="text-center">
-                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                  <User className="w-12 h-12 text-primary" />
+                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center shadow-[0_0_30px_rgba(79,209,197,0.4)] group-hover:shadow-[0_0_50px_rgba(79,209,197,0.6)] transition-all group-hover:scale-110 duration-300">
+                  <User className="w-12 h-12 text-white" />
                 </div>
                 <CardTitle className="text-xl">{therapist.name}</CardTitle>
                 <CardDescription className="text-sm">{therapist.credentials}</CardDescription>

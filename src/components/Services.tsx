@@ -39,11 +39,21 @@ const Services = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {services.map((service, index) => {
             const Icon = service.icon;
+            const gradients = [
+              'from-primary to-primary-glow',
+              'from-secondary to-secondary-glow',
+              'from-accent to-accent-glow',
+              'from-primary via-accent to-secondary'
+            ];
             return (
-              <Card key={index} className="hover:shadow-xl transition-shadow">
+              <Card 
+                key={index} 
+                className="hover:shadow-[0_0_40px_rgba(79,209,197,0.3)] transition-all duration-300 hover:-translate-y-2 animate-fade-in border-2 hover:border-primary/50"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
                 <CardHeader>
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center mb-4">
-                    <Icon className="w-6 h-6 text-primary-foreground" />
+                  <div className={`w-12 h-12 bg-gradient-to-br ${gradients[index]} rounded-lg flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(79,209,197,0.4)] hover:shadow-[0_0_30px_rgba(79,209,197,0.6)] transition-all`}>
+                    <Icon className="w-6 h-6 text-white" />
                   </div>
                   <CardTitle className="text-xl">{service.title}</CardTitle>
                 </CardHeader>

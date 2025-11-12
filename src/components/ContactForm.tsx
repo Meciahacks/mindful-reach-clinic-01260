@@ -56,8 +56,8 @@ const ContactForm = () => {
   return (
     <section id="contact" className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
-        <div className="max-w-2xl mx-auto">
-          <Card className="shadow-xl">
+        <div className="max-w-2xl mx-auto animate-fade-in-up">
+          <Card className="shadow-[0_0_50px_rgba(79,209,197,0.2)] border-2 border-primary/20 hover:border-primary/40 transition-all duration-300">
             <CardHeader className="text-center">
               <CardTitle className="text-3xl md:text-4xl font-bold">Get Started Today</CardTitle>
               <CardDescription className="text-lg mt-2">
@@ -127,7 +127,7 @@ const ContactForm = () => {
                 <Button 
                   type="submit" 
                   size="lg" 
-                  className="w-full"
+                  className="w-full shadow-[0_0_30px_rgba(79,209,197,0.3)] hover:shadow-[0_0_50px_rgba(79,209,197,0.6)] transition-all duration-300 hover:scale-105"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Sending..." : "Send Message"}

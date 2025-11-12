@@ -43,13 +43,13 @@ const Testimonials = () => {
           {testimonials.map((testimonial, index) => (
             <Card
               key={index}
-              className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-fade-in"
+              className="hover:shadow-[0_0_40px_rgba(255,107,53,0.3)] transition-all duration-300 hover:-translate-y-2 animate-slide-in-right border-2 hover:border-secondary/50"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <CardContent className="pt-6">
                 <div className="flex gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-secondary text-secondary" />
+                    <Star key={i} className="w-5 h-5 fill-secondary text-secondary drop-shadow-[0_0_8px_rgba(255,107,53,0.6)] animate-pulse" style={{ animationDelay: `${i * 100}ms`, animationDuration: "2s" }} />
                   ))}
                 </div>
                 <p className="text-muted-foreground mb-4 italic">"{testimonial.text}"</p>

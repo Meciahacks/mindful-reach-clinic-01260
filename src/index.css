@@ -8,70 +8,92 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 30 40% 97%;
-    --foreground: 210 15% 20%;
+    --background: 220 30% 98%;
+    --foreground: 220 20% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 15% 20%;
+    --card-foreground: 220 20% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 15% 20%;
+    --popover-foreground: 220 20% 15%;
 
-    --primary: 180 45% 55%;
+    --primary: 180 70% 50%;
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 180 80% 60%;
 
-    --secondary: 15 75% 70%;
-    --secondary-foreground: 210 15% 20%;
+    --secondary: 15 90% 65%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 15 95% 75%;
 
-    --muted: 180 20% 94%;
-    --muted-foreground: 210 10% 45%;
+    --muted: 220 20% 95%;
+    --muted-foreground: 220 15% 45%;
 
-    --accent: 140 35% 70%;
-    --accent-foreground: 210 15% 20%;
+    --accent: 140 65% 55%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 140 75% 65%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 180 20% 88%;
-    --input: 180 20% 88%;
-    --ring: 180 45% 55%;
+    --border: 220 20% 90%;
+    --input: 220 20% 90%;
+    --ring: 180 70% 50%;
 
     --radius: 1rem;
 
-    /* Custom therapy design tokens */
-    --hero-gradient: linear-gradient(135deg, hsl(180 45% 55% / 0.1), hsl(15 75% 70% / 0.1));
-    --soft-shadow: 0 4px 20px hsl(180 45% 55% / 0.08);
+    /* Vibrant design tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(180 70% 50%), hsl(180 80% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(15 90% 65%), hsl(15 95% 75%));
+    --gradient-accent: linear-gradient(135deg, hsl(140 65% 55%), hsl(140 75% 65%));
+    --gradient-hero: linear-gradient(135deg, hsl(180 70% 50% / 0.2), hsl(15 90% 65% / 0.2), hsl(140 65% 55% / 0.1));
+    --glow-primary: 0 0 30px hsl(180 70% 50% / 0.5);
+    --glow-secondary: 0 0 30px hsl(15 90% 65% / 0.5);
+    --glow-accent: 0 0 30px hsl(140 65% 55% / 0.5);
+    --shadow-vibrant: 0 8px 32px hsl(180 70% 50% / 0.15);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
-    --background: 210 20% 12%;
-    --foreground: 30 40% 95%;
+    --background: 220 30% 8%;
+    --foreground: 220 20% 95%;
 
-    --card: 210 18% 16%;
-    --card-foreground: 30 40% 95%;
+    --card: 220 25% 12%;
+    --card-foreground: 220 20% 95%;
 
-    --popover: 210 18% 16%;
-    --popover-foreground: 30 40% 95%;
+    --popover: 220 25% 12%;
+    --popover-foreground: 220 20% 95%;
 
-    --primary: 180 45% 50%;
+    --primary: 180 70% 55%;
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 180 80% 65%;
 
-    --secondary: 15 75% 65%;
+    --secondary: 15 90% 70%;
     --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 15 95% 80%;
 
-    --muted: 210 15% 20%;
-    --muted-foreground: 210 10% 65%;
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 15% 65%;
 
-    --accent: 140 35% 60%;
+    --accent: 140 65% 60%;
     --accent-foreground: 0 0% 100%;
+    --accent-glow: 140 75% 70%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 15% 25%;
-    --input: 210 15% 25%;
-    --ring: 180 45% 50%;
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 180 70% 55%;
+    
+    /* Dark mode vibrant tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(180 70% 55%), hsl(180 80% 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(15 90% 70%), hsl(15 95% 80%));
+    --gradient-accent: linear-gradient(135deg, hsl(140 65% 60%), hsl(140 75% 70%));
+    --gradient-hero: linear-gradient(135deg, hsl(180 70% 55% / 0.15), hsl(15 90% 70% / 0.15), hsl(140 65% 60% / 0.1));
+    --glow-primary: 0 0 40px hsl(180 70% 55% / 0.6);
+    --glow-secondary: 0 0 40px hsl(15 90% 70% / 0.6);
+    --glow-accent: 0 0 40px hsl(140 65% 60% / 0.6);
+    --shadow-vibrant: 0 8px 32px hsl(180 70% 55% / 0.2);
   }
 }
 
