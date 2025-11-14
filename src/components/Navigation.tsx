@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/unveiled-echo-logo.jpg";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -49,8 +49,8 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => scrollToSection("hero")}>
-            <img src={logo} alt="MindfulCare Logo" className="w-10 h-10" />
-            <span className="text-xl font-bold text-foreground">MindfulCare</span>
+            <img src={logo} alt="Unveiled Echo Logo" className="w-12 h-12 object-contain" />
+            <span className="text-xl font-bold text-foreground">Unveiled Echo</span>
           </div>
 
           {/* Desktop Navigation */}

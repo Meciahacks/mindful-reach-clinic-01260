@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-image.jpg";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/unveiled-echo-logo.jpg";
 
 const Hero = () => {
   const scrollToContact = () => {
@@ -30,14 +30,14 @@ const Hero = () => {
       <div className="relative z-10 container mx-auto px-4 text-center animate-fade-in-up">
         <img 
           src={logo} 
-          alt="MindfulCare Logo" 
-          className="w-24 h-24 mx-auto mb-6 animate-float drop-shadow-[0_0_30px_rgba(79,209,197,0.6)]"
+          alt="Unveiled Echo Logo" 
+          className="w-32 h-32 mx-auto mb-6 animate-float drop-shadow-[0_0_30px_rgba(79,209,197,0.6)] object-contain"
         />
         <h1 className="text-5xl md:text-7xl font-bold mb-6 text-foreground drop-shadow-lg">
-          Your Journey to{" "}
+          Unveiled Echo{" "}
           <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent animate-shimmer"
                 style={{ backgroundSize: "200% auto" }}>
-            Better Mental Health
+            of Inner Self
           </span>
         </h1>
         <p className="text-xl md:text-2xl mb-8 text-foreground/90 max-w-2xl mx-auto drop-shadow-md">

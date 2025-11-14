@@ -1,4 +1,4 @@
-import logo from "@/assets/logo.png";
+import logo from "@/assets/unveiled-echo-logo.jpg";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
@@ -8,8 +8,8 @@ const Footer = () => {
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <img src={logo} alt="MindfulCare" className="w-10 h-10" />
-              <span className="text-xl font-bold">MindfulCare</span>
+              <img src={logo} alt="Unveiled Echo" className="w-12 h-12 object-contain" />
+              <span className="text-xl font-bold">Unveiled Echo</span>
             </div>
             <p className="text-muted-foreground">
               Professional online therapy and counseling services. 
@@ -32,7 +32,7 @@ const Footer = () => {
             <ul className="space-y-3 text-muted-foreground">
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-primary" />
-                <span>support@mindfulcare.com</span>
+                <span>support@unveiledecho.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-primary" />
@@ -47,7 +47,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t pt-8 text-center text-muted-foreground">
-          <p>© {new Date().getFullYear()} MindfulCare. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Unveiled Echo. All rights reserved.</p>
           <p className="text-sm mt-2">
             If you're experiencing a mental health crisis, please call the National Suicide Prevention Lifeline at 988.
           </p>
