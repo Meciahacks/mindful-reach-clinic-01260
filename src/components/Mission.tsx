@@ -14,7 +14,7 @@ const Mission = () => {
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-          <Card className="border-2 hover:border-primary transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,209,197,0.3)] hover:-translate-y-2 animate-fade-in group">
+          <Card data-stagger-child className="border-2 hover:border-primary transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,209,197,0.3)] hover:-translate-y-2 group">
             <CardContent className="pt-6 text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(79,209,197,0.4)] group-hover:shadow-[0_0_30px_rgba(79,209,197,0.6)] transition-all group-hover:scale-110 duration-300">
                 <Heart className="w-8 h-8 text-white" />
@@ -26,7 +26,7 @@ const Mission = () => {
             </CardContent>
           </Card>
           
-          <Card className="border-2 hover:border-secondary transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,107,53,0.3)] hover:-translate-y-2 animate-fade-in group" style={{ animationDelay: "100ms" }}>
+          <Card data-stagger-child className="border-2 hover:border-secondary transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,107,53,0.3)] hover:-translate-y-2 group">
             <CardContent className="pt-6 text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-secondary to-secondary-glow rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(255,107,53,0.4)] group-hover:shadow-[0_0_30px_rgba(255,107,53,0.6)] transition-all group-hover:scale-110 duration-300">
                 <Users className="w-8 h-8 text-white" />
@@ -38,7 +38,7 @@ const Mission = () => {
             </CardContent>
           </Card>
           
-          <Card className="border-2 hover:border-accent transition-all duration-300 hover:shadow-[0_0_40px_rgba(76,206,172,0.3)] hover:-translate-y-2 animate-fade-in group" style={{ animationDelay: "200ms" }}>
+          <Card data-stagger-child className="border-2 hover:border-accent transition-all duration-300 hover:shadow-[0_0_40px_rgba(76,206,172,0.3)] hover:-translate-y-2 group">
             <CardContent className="pt-6 text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-accent to-accent-glow rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(76,206,172,0.4)] group-hover:shadow-[0_0_30px_rgba(76,206,172,0.6)] transition-all group-hover:scale-110 duration-300">
                 <Award className="w-8 h-8 text-white" />
@@ -50,7 +50,7 @@ const Mission = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-2 hover:border-primary transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,209,197,0.3)] hover:-translate-y-2 animate-fade-in group" style={{ animationDelay: "300ms" }}>
+          <Card data-stagger-child className="border-2 hover:border-primary transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,209,197,0.3)] hover:-translate-y-2 group">
             <CardContent className="pt-6 text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(79,209,197,0.4)] group-hover:shadow-[0_0_30px_rgba(79,209,197,0.6)] transition-all group-hover:scale-110 duration-300">
                 <Shield className="w-8 h-8 text-white" />

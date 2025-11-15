@@ -30,7 +30,15 @@ const Testimonials = () => {
   ];
 
   return (
-    <section id="testimonials" className="py-20 bg-muted/30">
+    <section id="testimonials" className="py-20 relative overflow-hidden">
+      {/* Decorative parallax background: visible so parallax is noticeable */}
+      <div
+        data-parallax-bg
+        data-speed="0.12"
+        className="absolute inset-0 -z-10 pointer-events-none bg-gradient-to-br from-secondary/30 via-accent/20 to-transparent"
+        style={{ transform: 'translate3d(0,0,0)', willChange: 'transform' }}
+      />
+
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl font-bold mb-4 text-foreground">What Our Clients Say</h2>

@@ -1,7 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
@@ -36,7 +36,7 @@ All colors MUST be HSL.
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 20% 90%;
-    --input: 220 20% 90%;
+    --input: 220 20% 90%;   
     --ring: 180 70% 50%;
 
     --radius: 1rem;
@@ -108,5 +108,30 @@ All colors MUST be HSL.
   
   html {
     scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Scroll reveal helpers */
+  :root {
+    --reveal-duration: 700ms;
+    --reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal-hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity var(--reveal-duration) var(--reveal-ease), transform var(--reveal-duration) var(--reveal-ease);
+    will-change: transform, opacity;
+  }
+
+  .reveal-in {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+
+  .reveal-out {
+    opacity: 0 !important;
+    transform: translateY(20px) !important;
   }
 }
