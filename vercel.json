@@ -1,19 +1,41 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "env": [
-    "VITE_API_URL",
-    "GOOGLE_SHEET_ID",
-    "GOOGLE_CLIENT_EMAIL",
-    "GOOGLE_PRIVATE_KEY",
-    "SMTP_HOST",
-    "SMTP_PORT",
-    "SMTP_USER",
-    "SMTP_PASS",
-    "SMTP_SECURE",
-    "OWNER_EMAIL",
-    "FRONTEND_URL"
-  ],
+  "env": {
+    "VITE_API_URL": {
+      "required": true
+    },
+    "GOOGLE_SHEET_ID": {
+      "required": true
+    },
+    "GOOGLE_CLIENT_EMAIL": {
+      "required": true
+    },
+    "GOOGLE_PRIVATE_KEY": {
+      "required": true
+    },
+    "SMTP_HOST": {
+      "required": true
+    },
+    "SMTP_PORT": {
+      "required": true
+    },
+    "SMTP_USER": {
+      "required": true
+    },
+    "SMTP_PASS": {
+      "required": true
+    },
+    "SMTP_SECURE": {
+      "required": false
+    },
+    "OWNER_EMAIL": {
+      "required": true
+    },
+    "FRONTEND_URL": {
+      "required": true
+    }
+  },
   "functions": {
     "api/send-email.js": {
       "memory": 1024,
