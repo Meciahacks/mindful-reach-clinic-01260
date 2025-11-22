@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { z } from "zod";
 import PrivacyPolicyDialog from "./PrivacyPolicyDialog";
-import { submitFormBoth } from "@/services/sheetsService";
+import { submitToGoogleSheets } from "@/services/sheetsService";
 
 const contactSchema = z.object({ 
   name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
@@ -49,20 +49,19 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Submit to Google Sheets AND send email
-      const result = await submitFormBoth(formData);
-      
-      // Show success message with details
-      let message = "Thank you! Your submission has been saved";
-      if (result.sheets?.success) message += " to our records";
-      if (result.email?.success) message += " and email sent";
-      
-      toast.success(message);
-      setFormData({ name: "", email: "", phone: "", message: "" });
-      setPendingFormData(null);
+      // Submit only to Google Sheets
+      const result = await submitToGoogleSheets(formData);
+
+      if (result && result.success) {
+        toast.success("Thank you! Your submission has been saved to our records.");
+        setFormData({ name: "", email: "", phone: "", message: "" });
+        setPendingFormData(null);
+      } else {
+        const msg = (result && result.message) || 'Failed to save submission';
+        toast.error(msg);
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
-      // More detailed error message
       const errorMsg = error instanceof Error ? error.message : "Failed to submit form";
       toast.error(errorMsg || "Please check your connection and try again.");
     } finally {
