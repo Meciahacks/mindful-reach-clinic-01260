@@ -1,5 +1,5 @@
-// Email service for sending form submissions
-import { getApiUrl } from "@/config/email";
+// Email service for sending form submissions via backend endpoint
+// The backend handles SMTP connections securely
 
 export interface FormSubmissionData {
   name: string;
@@ -9,6 +9,8 @@ export interface FormSubmissionData {
   submittedAt?: string;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 /**
  * Sends form submission details to owner via email
  * @param formData - The form data to send
@@ -16,28 +18,30 @@ export interface FormSubmissionData {
  */
 export const sendFormSubmissionEmail = async (formData: FormSubmissionData) => {
   try {
-    const apiUrl = getApiUrl();
+    // Detect if running on local server or Vercel functions
+    const endpoint = API_URL.includes('vercel') 
+      ? `${API_URL}/api/send-email` 
+      : `${API_URL}/api/send-email`;
     
-    const response = await fetch(`${apiUrl}/api/send-email`, {
-      method: "POST",
+    const response = await fetch(endpoint, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         ...formData,
-        submittedAt: new Date().toISOString(),
-        type: "form_submission",
+        submittedAt: formData.submittedAt || new Date().toISOString(),
       }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to send email");
+      throw new Error(error.error || error.message || 'Failed to send email');
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error sending form submission email:", error);
+    console.error('Error sending form submission email:', error);
     throw error;
   }
 };
@@ -49,24 +53,26 @@ export const sendFormSubmissionEmail = async (formData: FormSubmissionData) => {
  */
 export const sendTestEmail = async (testEmail: string) => {
   try {
-    const apiUrl = getApiUrl();
+    const endpoint = API_URL.includes('vercel') 
+      ? `${API_URL}/api/send-test-email` 
+      : `${API_URL}/api/send-test-email`;
     
-    const response = await fetch(`${apiUrl}/api/send-test-email`, {
-      method: "POST",
+    const response = await fetch(endpoint, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ testEmail }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to send test email");
+      throw new Error(error.error || error.message || 'Failed to send test email');
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error sending test email:", error);
+    console.error('Error sending test email:', error);
     throw error;
   }
 };
