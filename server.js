@@ -7,6 +7,7 @@ import express from 'express';
 import nodemailer from 'nodemailer';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { google } from 'googleapis';
 
 dotenv.config();
 
@@ -14,11 +15,35 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  methods: ['POST', 'GET'],
-  credentials: true,
-}));
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://unveiledecho.com',
+].filter(Boolean);
+
+// CORS middleware with logging and permissive local settings for development
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const isLocalhost = origin && /localhost|127\.0\.0\.1/.test(origin);
+  const allowed = !origin || isLocalhost || allowedOrigins.includes(origin);
+
+  console.log('[CORS] origin:', origin, 'allowed:', allowed);
+
+  if (allowed) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
 app.use(express.json());
 
 // Create email transporter
@@ -118,6 +143,53 @@ const escapeHtml = (text) => {
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Email server is running' });
+});
+
+// Submit to Google Sheets (local development helper)
+app.post('/api/submit-to-sheets', async (req, res) => {
+  try {
+    const { name, email, phone, message, submittedAt } = req.body;
+
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const sheetId = process.env.GOOGLE_SHEET_ID;
+    const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+
+    if (!sheetId || !clientEmail || !privateKey) {
+      console.error('ERROR: Google Sheets credentials not configured');
+      return res.status(500).json({ error: 'Google Sheets credentials not configured' });
+    }
+
+    const jwt = new google.auth.JWT(
+      clientEmail,
+      null,
+      (privateKey || '').replace(/\\n/g, '\n'),
+      ['https://www.googleapis.com/auth/spreadsheets']
+    );
+
+    const sheets = google.sheets({ version: 'v4', auth: jwt });
+
+    const values = [
+      [submittedAt || new Date().toISOString(), name, email, phone || '', message],
+    ];
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: sheetId,
+      range: 'Sheet1!A:E',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values },
+    });
+
+    console.log(`✓ Appended row to Google Sheet ${sheetId} for ${email}`);
+
+    res.json({ success: true, message: 'Submitted to Google Sheets' });
+  } catch (error) {
+    console.error('✗ Error submitting to Google Sheets:', error.message || error);
+    res.status(500).json({ error: 'Failed to submit to Google Sheets', message: error.message });
+  }
 });
 
 // Send form submission email
