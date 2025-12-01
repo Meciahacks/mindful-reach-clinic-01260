@@ -14,15 +14,7 @@
     "OWNER_EMAIL": "@owner_email",
     "FRONTEND_URL": "@frontend_url"
   },
-  "functions": {
-    "api/send-email.js": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/submit-to-sheets.js": {
-      "memory": 1024,
-      "maxDuration": 30
-    }
+  "functions": {    
   }
 }
 {
