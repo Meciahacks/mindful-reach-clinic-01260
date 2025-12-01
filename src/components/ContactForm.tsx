@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { z } from "zod";
 import PrivacyPolicyDialog from "./PrivacyPolicyDialog";
-import { Resend } from 'resend';
-import { log } from "console";
+import { sendFormSubmissionEmail } from "@/services/resendEmailService";
 
 const contactSchema = z.object({ 
   name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
@@ -34,19 +33,6 @@ const ContactForm = () => {
       const validatedData = contactSchema.parse(formData);
       setPendingFormData(validatedData);
       setShowPrivacyPolicy(true);
-
-
-
-    
-      console.log("****",formData,'****',validatedData);      
-      const resend = new Resend('re_2x8drriS_EJHWB7k8zuyV8wJmPW1fiy7P');
-      resend.emails.send({
-        from: 'onboarding@resend.dev',
-        to: 'intakes@unveiledecho.com',
-        subject: 'Hello World',
-        html: '<p>Congrats on sending your <strong>first email</strong>!</p>'
-      });
-      
     } catch (error) {
       if (error instanceof z.ZodError) {
         const firstError = error.errors[0];
@@ -61,18 +47,35 @@ const ContactForm = () => {
     setShowPrivacyPolicy(false);
     setIsSubmitting(true);
 
-    // Placeholder function to simulate submission
-    setTimeout(() => {
-      toast.success("Thank you for your message!");
+    try {
+      if (!pendingFormData) {
+        toast.error("No form data to submit");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Send email via backend API
+      await sendFormSubmissionEmail(pendingFormData);
+
+      // Success
+      toast.success("Thank you for your message! We'll get back to you shortly.");
       setFormData({
         name: "",
         email: "",
         phone: "",
         message: "",
       });
-      setIsSubmitting(false);
       setPendingFormData(null);
-    }, 1000);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to submit your message. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (

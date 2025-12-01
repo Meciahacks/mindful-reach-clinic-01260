@@ -1,12 +1,14 @@
-// Minimal email server for sending form submissions
-// This server handles SMTP connections securely
-// Setup: npm install express nodemailer cors dotenv
-// Run: node server.js
+/**
+ * Backend API Server for Email Integration
+ * Handles sending emails via Resend
+ * Setup: npm install express resend cors dotenv
+ * Run: node server.js
+ */
 
 import express from 'express';
-import nodemailer from 'nodemailer';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { Resend } from 'resend';
 
 dotenv.config();
 
@@ -21,87 +23,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Create email transporter
-const createTransporter = () => {
-  const config = {
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: process.env.SMTP_SECURE === 'true', // true for 465, false for 587
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  };
-
-  if (!config.auth.user || !config.auth.pass) {
-    console.error('ERROR: SMTP credentials not configured!');
-    console.error('Please set SMTP_USER and SMTP_PASS environment variables');
-    process.exit(1);
-  }
-
-  return nodemailer.createTransport(config);
-};
-
-// Email template helper
-const getEmailTemplate = (data) => `
-  <html>
-    <head>
-      <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background-color: #0ea5e9; color: white; padding: 20px; border-radius: 5px; }
-        .content { margin: 20px 0; padding: 20px; background-color: #f5f5f5; border-radius: 5px; }
-        .field { margin: 15px 0; }
-        .label { font-weight: bold; color: #0ea5e9; }
-        .value { margin-top: 5px; }
-        .footer { margin-top: 30px; font-size: 12px; color: #666; border-top: 1px solid #ddd; padding-top: 20px; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>New Form Submission - Unveiled Echo</h1>
-        </div>
-        
-        <div class="content">
-          <h2>Client Details</h2>
-          
-          <div class="field">
-            <div class="label">Name:</div>
-            <div class="value">${escapeHtml(data.name)}</div>
-          </div>
-          
-          <div class="field">
-            <div class="label">Email:</div>
-            <div class="value"><a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a></div>
-          </div>
-          
-          ${data.phone ? `
-          <div class="field">
-            <div class="label">Phone:</div>
-            <div class="value">${escapeHtml(data.phone)}</div>
-          </div>
-          ` : ''}
-          
-          <div class="field">
-            <div class="label">Message:</div>
-            <div class="value">${escapeHtml(data.message).replace(/\n/g, '<br>')}</div>
-          </div>
-          
-          <div class="field">
-            <div class="label">Submitted At:</div>
-            <div class="value">${new Date(data.submittedAt || new Date()).toLocaleString()}</div>
-          </div>
-        </div>
-        
-        <div class="footer">
-          <p>This is an automated email from Unveiled Echo clinic form submission system.</p>
-          <p>Please reply directly to the client's email address to respond to their inquiry.</p>
-        </div>
-      </div>
-    </body>
-  </html>
-`;
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // HTML escape helper
 const escapeHtml = (text) => {
@@ -115,45 +38,155 @@ const escapeHtml = (text) => {
   return String(text || '').replace(/[&<>"']/g, (m) => map[m]);
 };
 
-// Health check
+// Email template generator for form submissions
+const getFormSubmissionTemplate = (data) => `
+  <html>
+    <head>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb; }
+        .email-wrapper { background-color: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; padding: 30px 20px; border-radius: 8px 8px 0 0; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+        .content { padding: 30px 20px; }
+        .field { margin: 20px 0; padding: 15px; background-color: #f3f4f6; border-left: 4px solid #0ea5e9; border-radius: 4px; }
+        .label { font-weight: 600; color: #0ea5e9; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .value { margin-top: 8px; color: #1f2937; font-size: 14px; line-height: 1.6; word-break: break-word; }
+        .footer { padding: 20px; background-color: #f9fafb; border-top: 1px solid #e5e7eb; text-align: center; font-size: 12px; color: #6b7280; border-radius: 0 0 8px 8px; }
+        .action-button { display: inline-block; padding: 10px 20px; background-color: #0ea5e9; color: white; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 500; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="email-wrapper">
+          <div class="header">
+            <h1>🎯 New Form Submission</h1>
+            <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">Unveiled Echo Clinic</p>
+          </div>
+          
+          <div class="content">
+            <h2 style="color: #1f2937; margin-top: 0;">Client Information</h2>
+            
+            <div class="field">
+              <div class="label">Name</div>
+              <div class="value">${escapeHtml(data.name)}</div>
+            </div>
+            
+            <div class="field">
+              <div class="label">Email Address</div>
+              <div class="value"><a href="mailto:${escapeHtml(data.email)}" style="color: #0ea5e9; text-decoration: none;">${escapeHtml(data.email)}</a></div>
+            </div>
+            
+            ${data.phone ? `
+            <div class="field">
+              <div class="label">Phone Number</div>
+              <div class="value">${escapeHtml(data.phone)}</div>
+            </div>
+            ` : ''}
+            
+            <div class="field">
+              <div class="label">Message</div>
+              <div class="value">${escapeHtml(data.message).replace(/\n/g, '<br>')}</div>
+            </div>
+            
+            <div class="field">
+              <div class="label">Submitted At</div>
+              <div class="value">${new Date(data.submittedAt || new Date()).toLocaleString()}</div>
+            </div>
+
+            <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 13px;">
+              💡 <strong>Quick Action:</strong> Reply directly to this email to contact the client.
+            </p>
+          </div>
+          
+          <div class="footer">
+            <p style="margin: 0;">This is an automated email from Unveiled Echo clinic submission system.</p>
+            <p style="margin: 8px 0 0 0;">© ${new Date().getFullYear()} Unveiled Echo. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </body>
+  </html>
+`;
+
+// Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Email server is running' });
+  res.json({ 
+    status: 'ok', 
+    message: 'Backend server is running',
+    services: {
+      resend: process.env.RESEND_API_KEY ? '✓ Configured' : '✗ Not configured'
+    }
+  });
 });
 
-// Send form submission email
-app.post('/api/send-email', async (req, res) => {
+/**
+ * Send form submission email via Resend
+ * POST /api/send-email-resend
+ */
+app.post('/api/send-email-resend', async (req, res) => {
   try {
     const { name, email, phone, message, submittedAt } = req.body;
 
     // Validate required fields
     if (!name || !email || !message) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: 'Missing required fields: name, email, and message are required' });
     }
 
-    const transporter = createTransporter();
-    const ownerEmail = process.env.OWNER_EMAIL || process.env.SMTP_USER || 'owner@unveiledecho.com';
-    const senderEmail = process.env.SMTP_USER || 'noreply@unveiledecho.com';
+    // Validate Resend API key
+    if (!process.env.RESEND_API_KEY) {
+      console.error('✗ Resend API key not configured');
+      return res.status(500).json({ error: 'Resend API key not configured' });
+    }
+
+    const ownerEmail = process.env.OWNER_EMAIL || process.env.RESEND_FROM_EMAIL || 'default@resend.dev';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
     // Send email to owner
-    await transporter.sendMail({
-      from: senderEmail,
+    const response = await resend.emails.send({
+      from: fromEmail,
       to: ownerEmail,
-      subject: `New Form Submission from ${name} - Unveiled Echo`,
-      html: getEmailTemplate({ name, email, phone, message, submittedAt: submittedAt || new Date().toISOString() }),
       replyTo: email,
+      subject: `New Form Submission from ${name} - Unveiled Echo Clinic`,
+      html: getFormSubmissionTemplate({ 
+        name, 
+        email, 
+        phone, 
+        message, 
+        submittedAt: submittedAt || new Date().toISOString() 
+      }),
     });
 
-    console.log(`✓ Form submission email sent from ${email} to ${ownerEmail}`);
+    if (response.error) {
+      console.error('✗ Resend API error:', response.error);
+      return res.status(500).json({ 
+        error: 'Failed to send email', 
+        message: response.error.message 
+      });
+    }
+
+    console.log(`✓ Form submission email sent successfully from ${email} to ${ownerEmail}`);
+    console.log(`  Email ID: ${response.data.id}`);
     
-    res.json({ success: true, message: 'Form submission email sent successfully' });
+    res.json({ 
+      success: true, 
+      message: 'Form submission email sent successfully',
+      emailId: response.data.id 
+    });
   } catch (error) {
-    console.error('✗ Error sending email:', error && error.message ? error.message : error);
-    res.status(500).json({ error: 'Failed to send email', message: error && error.message ? error.message : String(error) });
+    console.error('✗ Error sending email:', error?.message || error);
+    res.status(500).json({ 
+      error: 'Failed to send email', 
+      message: error?.message || String(error) 
+    });
   }
 });
 
-// Send test email
-app.post('/api/send-test-email', async (req, res) => {
+/**
+ * Send test email via Resend
+ * POST /api/send-test-email-resend
+ */
+app.post('/api/send-test-email-resend', async (req, res) => {
   try {
     const { testEmail } = req.body;
 
@@ -161,28 +194,50 @@ app.post('/api/send-test-email', async (req, res) => {
       return res.status(400).json({ error: 'Test email address required' });
     }
 
-    const transporter = createTransporter();
-    const senderEmail = process.env.SMTP_USER || 'noreply@unveiledecho.com';
+    if (!process.env.RESEND_API_KEY) {
+      console.error('✗ Resend API key not configured');
+      return res.status(500).json({ error: 'Resend API key not configured' });
+    }
 
-    await transporter.sendMail({
-      from: senderEmail,
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+
+    const response = await resend.emails.send({
+      from: fromEmail,
       to: testEmail,
-      subject: 'Unveiled Echo - Email Configuration Test',
+      subject: '✓ Unveiled Echo Clinic - Email Configuration Test',
       html: `
         <html>
           <head>
             <style>
-              body { font-family: Arial, sans-serif; }
+              body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
               .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .success { background-color: #10b981; color: white; padding: 15px; border-radius: 5px; }
+              .email-wrapper { background-color: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
+              .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 40px 20px; text-align: center; }
+              .header h1 { margin: 0; font-size: 28px; font-weight: 600; }
+              .content { padding: 40px 20px; text-align: center; }
+              .success-icon { font-size: 60px; margin-bottom: 20px; }
+              .message { color: #1f2937; font-size: 16px; line-height: 1.6; margin: 20px 0; }
+              .footer { padding: 20px; background-color: #f9fafb; border-top: 1px solid #e5e7eb; text-align: center; font-size: 12px; color: #6b7280; }
             </style>
           </head>
           <body>
             <div class="container">
-              <div class="success">
-                <h1>✓ Email Configuration Successful!</h1>
-                <p>Your email service is properly configured and working.</p>
-                <p>You can now start receiving form submissions from your clinic website.</p>
+              <div class="email-wrapper">
+                <div class="header">
+                  <h1>✓ Email Service Connected!</h1>
+                </div>
+                <div class="content">
+                  <div class="success-icon">🎉</div>
+                  <h2 style="color: #10b981; margin-top: 0;">Configuration Successful</h2>
+                  <p class="message">Your Resend email service is properly configured and working.</p>
+                  <p class="message">Your clinic can now receive form submissions and client messages.</p>
+                  <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">
+                    Powered by Resend • Unveiled Echo Clinic Management System
+                  </p>
+                </div>
+                <div class="footer">
+                  <p>This is an automated test email. You can safely ignore this message.</p>
+                </div>
               </div>
             </div>
           </body>
@@ -190,140 +245,47 @@ app.post('/api/send-test-email', async (req, res) => {
       `,
     });
 
-    console.log(`✓ Test email sent to ${testEmail}`);
-
-    res.json({ success: true, message: `Test email sent successfully to ${testEmail}` });
-  } catch (error) {
-    console.error('✗ Error sending test email:', error && error.message ? error.message : error);
-    res.status(500).json({ error: 'Failed to send test email', message: error && error.message ? error.message : String(error) });
-  }
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`\n${'='.repeat(50)}`);
-  console.log('📧 Email Server Started Successfully');
-  console.log(`${'='.repeat(50)}`);
-  console.log(`Port: ${PORT}`);
-  console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
-  console.log(`SMTP Host: ${process.env.SMTP_HOST || 'smtp.gmail.com'}`);
-  console.log(`SMTP User: ${process.env.SMTP_USER ? '✓ Configured' : '✗ NOT SET'}`);
-  console.log(`Owner Email: ${process.env.OWNER_EMAIL || 'owner@unveiledecho.com'}`);
-  console.log(`${'='.repeat(50)}\n`);
-});
-
-// Graceful shutdown
-process.on('SIGINT', () => {
-  console.log('\n✓ Email server shutting down gracefully...');
-  process.exit(0);
-});
-// Minimal email server for sending form submissions
-// This server handles SMTP connections securely
-// Setup: npm install express nodemailer cors dotenv
-// Run: node server.js
-
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { google } from 'googleapis';
-
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3001;
-
-// Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  methods: ['POST', 'GET'],
-  credentials: true,
-}));
-app.use(express.json());
-
-// The server no longer handles sending emails. It only provides a Sheets endpoint and a health check.
-
-// HTML escape helper
-const escapeHtml = (text) => {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;',
-  };
-  return text.replace(/[&<>"']/g, (m) => map[m]);
-};
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Email server is running' });
-});
-
-// Health check (existing)
-
-// Submit to Google Sheets
-app.post('/api/submit-to-sheets', async (req, res) => {
-  try {
-    const { name, email, phone, message, submittedAt } = req.body;
-
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    if (response.error) {
+      console.error('✗ Resend API error:', response.error);
+      return res.status(500).json({ 
+        error: 'Failed to send test email', 
+        message: response.error.message 
+      });
     }
 
-    const sheetId = process.env.GOOGLE_SHEET_ID;
-    const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    console.log(`✓ Test email sent successfully to ${testEmail}`);
+    console.log(`  Email ID: ${response.data.id}`);
 
-    if (!sheetId || !clientEmail || !privateKey) {
-      console.error('ERROR: Google Sheets credentials not configured');
-      return res.status(500).json({ error: 'Google Sheets credentials not configured' });
-    }
-
-    const jwt = new google.auth.JWT(clientEmail, null, (privateKey || '').replace(/\\n/g, '\n'), [
-      'https://www.googleapis.com/auth/spreadsheets',
-    ]);
-
-    try {
-      await jwt.authorize();
-    } catch (authErr) {
-      console.error('✗ Google JWT authorization failed:', authErr && authErr.message ? authErr.message : authErr);
-      return res.status(500).json({ error: 'Google Sheets authorization failed', message: authErr && authErr.message ? authErr.message : String(authErr) });
-    }
-
-    const sheets = google.sheets({ version: 'v4', auth: jwt });
-    const values = [[submittedAt || new Date().toISOString(), name, email, phone || '', message]];
-
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: sheetId,
-      range: 'Sheet1!A:E',
-      valueInputOption: 'USER_ENTERED',
-      requestBody: { values },
+    res.json({ 
+      success: true, 
+      message: `Test email sent successfully to ${testEmail}`,
+      emailId: response.data.id 
     });
-
-    console.log(`✓ Appended row to Google Sheet ${sheetId} for ${email}`);
-
-    res.json({ success: true, message: 'Submitted to Google Sheets' });
   } catch (error) {
-    console.error('✗ Error submitting to Google Sheets:', error && error.message ? error.message : error);
-    res.status(500).json({ error: 'Failed to submit to Google Sheets', message: error && error.message ? error.message : String(error) });
+    console.error('✗ Error sending test email:', error?.message || error);
+    res.status(500).json({ 
+      error: 'Failed to send test email', 
+      message: error?.message || String(error) 
+    });
   }
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`\n${'='.repeat(50)}`);
-  console.log('📧 Email Server Started Successfully');
-  console.log(`${'='.repeat(50)}`);
+  console.log(`\n${'='.repeat(60)}`);
+  console.log('🚀 Backend Server Started Successfully');
+  console.log(`${'='.repeat(60)}`);
   console.log(`Port: ${PORT}`);
   console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
-  console.log(`SMTP Host: ${process.env.SMTP_HOST || 'smtp.gmail.com'}`);
-  console.log(`SMTP User: ${process.env.SMTP_USER ? '✓ Configured' : '✗ NOT SET'}`);
-  console.log(`Owner Email: ${process.env.OWNER_EMAIL || 'owner@unveiledecho.com'}`);
-  console.log(`${'='.repeat(50)}\n`);
+  console.log(`\n📧 Email Service (Resend):`);
+  console.log(`  Status: ${process.env.RESEND_API_KEY ? '✓ Configured' : '✗ Not configured'}`);
+  console.log(`  From Email: ${process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'}`);
+  console.log(`  Owner Email: ${process.env.OWNER_EMAIL || 'default@resend.dev'}`);
+  console.log(`${'='.repeat(60)}\n`);
 });
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n✓ Email server shutting down gracefully...');
+  console.log('\n✓ Backend server shutting down gracefully...');
   process.exit(0);
 });
