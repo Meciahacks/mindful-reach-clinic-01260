@@ -17,9 +17,14 @@ export async function POST(req: Request) {
       );
     }
 
+
+
+
+
+    
     // Send email
     await resend.emails.send({
-      from: "intake@yourdomain.com",
+      from: "intakes@unveiledecho.com",
       to: "intakes@unveiledecho.com",
       subject: `New Contact Form Submission from ${name}`,
       html: `
