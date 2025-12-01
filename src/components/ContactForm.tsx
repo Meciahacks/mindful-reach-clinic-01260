@@ -5,15 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { z } from "zod";
 import PrivacyPolicyDialog from "./PrivacyPolicyDialog";
-
-const contactSchema = z.object({
-  name: z.string().trim().min(1),
-  email: z.string().trim().email(),
-  phone: z.string().trim().optional(),
-  message: z.string().trim().min(1),
-});
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -26,38 +18,39 @@ const ContactForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      contactSchema.parse(formData);
-      setShowPrivacyPolicy(true); // open modal before submission
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        toast.error(error.errors[0].message);
-      } else {
-        toast.error("Something went wrong.");
-      }
+    // simple field check
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("Please fill all required fields.");
+      return;
     }
+
+    setShowPrivacyPolicy(true);
   };
 
   const handlePrivacyAgree = async () => {
     setShowPrivacyPolicy(false);
     setIsSubmitting(true);
 
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (data?.success) {
-      toast.success("Thank you! Your message has been sent.");
-      setFormData({ name: "", email: "", phone: "", message: "" });
-    } else {
-      toast.error("Failed to send message. Please try again.");
+      if (data.success) {
+        toast.success("Thank you! Your message has been sent.");
+        setFormData({ name: "", email: "", phone: "", message: "" });
+      } else {
+        toast.error(data.error || "Failed to send message.");
+      }
+    } catch (err) {
+      toast.error("Unexpected error — please try again.");
     }
 
     setIsSubmitting(false);
@@ -66,7 +59,10 @@ const ContactForm = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   return (
@@ -84,29 +80,60 @@ const ContactForm = () => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
+
                 <div>
                   <Label htmlFor="name">Full Name *</Label>
-                  <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
 
                 <div>
                   <Label htmlFor="email">Email *</Label>
-                  <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
 
                 <div>
                   <Label htmlFor="phone">Phone (Optional)</Label>
-                  <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} />
+                  <Input
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
                 </div>
 
                 <div>
                   <Label htmlFor="message">Message *</Label>
-                  <Textarea id="message" name="message" value={formData.message} onChange={handleChange} rows={5} required />
+                  <Textarea
+                    id="message"
+                    name="message"
+                    rows={5}
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
 
-                <Button type="submit" disabled={isSubmitting} className="w-full">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full"
+                >
                   {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
+
               </form>
             </CardContent>
           </Card>
