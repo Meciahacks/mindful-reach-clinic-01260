@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +16,7 @@ const ContactForm = () => {
     phone: "",
     message: "",
   });
-
+const form = useRef();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
 
@@ -41,24 +41,15 @@ const ContactForm = () => {
     setIsSubmitting(true);
     console.log('****test****')    
     try {
-      
-
-      emailjs.send(
-      'service_8lcglxj',
-      'template_qxy7u8a',      
-      formData,
-      'SemqVBr-_LhH2zuaW',
-    ).then(() => {console.log("EmailSENT");toast.success("Thank you for your message! We'll get back to you shortly.");
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-    });})
-    .catch(err => alert("Error sending message"));
-    
-    
-
+       emailjs.sendForm(
+      process.env.NEXT_PUBLIC_EMAILJS_SERVICE,
+      process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE,
+      form.current,
+      process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+    )
+    .then(() => alert("Email sent!"))
+    .catch(err => console.error("EmailJS Error:", err));
+    toast.success("Your message has been sent successfully!");
     } catch (err) {
       toast.error("Unexpected error — please try again.");
     }
@@ -89,7 +80,7 @@ const ContactForm = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form ref={form}  onSubmit={handleSubmit} className="space-y-6">
 
                 <div>
                   <Label htmlFor="name">Full Name *</Label>
