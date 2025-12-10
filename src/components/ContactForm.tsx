@@ -1,5 +1,5 @@
 "use client";
-import { useState,useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,18 +16,18 @@ const ContactForm = () => {
     phone: "",
     message: "",
   });
-const form = useRef();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // // simple field check
-    // if (!formData.name || !formData.email || !formData.message) {
-    //   toast.error("Please fill all required fields.");
-    //   return;
-    // }
+    // simple field check
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
 
 
 
@@ -41,15 +41,24 @@ const form = useRef();
     setIsSubmitting(true);
     console.log('****test****')    
     try {
-       emailjs.sendForm(
-      process.env.NEXT_PUBLIC_EMAILJS_SERVICE,
-      process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE,
-      form.current,
-      process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
-    )
-    .then(() => alert("Email sent!"))
-    .catch(err => console.error("EmailJS Error:", err));
-    toast.success("Your message has been sent successfully!");
+      
+
+      emailjs.send(
+      'service_8lcglxj',
+      'template_qxy7u8a',      
+      formData,
+      'SemqVBr-_LhH2zuaW',
+    ).then(() => {console.log("EmailSENT");toast.success("Thank you for your message! We'll get back to you shortly.");
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    });})
+    .catch(err => alert("Error sending message"));
+    
+    
+
     } catch (err) {
       toast.error("Unexpected error — please try again.");
     }
@@ -80,13 +89,15 @@ const form = useRef();
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form ref={form}  onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
 
                 <div>
                   <Label htmlFor="name">Full Name *</Label>
                   <Input
                     id="name"
                     name="name"
+                    value={formData.name}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -97,6 +108,8 @@ const form = useRef();
                     id="email"
                     name="email"
                     type="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -106,6 +119,8 @@ const form = useRef();
                   <Input
                     id="phone"
                     name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -115,6 +130,8 @@ const form = useRef();
                     id="message"
                     name="message"
                     rows={5}
+                    value={formData.message}
+                    onChange={handleChange}
                     required
                   />
                 </div>
