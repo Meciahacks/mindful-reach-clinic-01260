@@ -23,11 +23,11 @@ const form = useRef();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // simple field check
-    if (!formData.name || !formData.email || !formData.message) {
-      toast.error("Please fill all required fields.");
-      return;
-    }
+    // // simple field check
+    // if (!formData.name || !formData.email || !formData.message) {
+    //   toast.error("Please fill all required fields.");
+    //   return;
+    // }
 
 
 
@@ -87,8 +87,6 @@ const form = useRef();
                   <Input
                     id="name"
                     name="name"
-                    value={formData.name}
-                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -99,8 +97,6 @@ const form = useRef();
                     id="email"
                     name="email"
                     type="email"
-                    value={formData.email}
-                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -110,8 +106,6 @@ const form = useRef();
                   <Input
                     id="phone"
                     name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
                   />
                 </div>
 
@@ -121,8 +115,6 @@ const form = useRef();
                     id="message"
                     name="message"
                     rows={5}
-                    value={formData.message}
-                    onChange={handleChange}
                     required
                   />
                 </div>
