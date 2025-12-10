@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import emailjs from "@emailjs/browser";
 import PrivacyPolicyDialog from "./PrivacyPolicyDialog";
 
 const ContactForm = () => {
@@ -27,28 +28,36 @@ const ContactForm = () => {
       return;
     }
 
+
+
+
+
     setShowPrivacyPolicy(true);
   };
 
   const handlePrivacyAgree = async () => {
     setShowPrivacyPolicy(false);
     setIsSubmitting(true);
-
+    console.log('****test****')    
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      
 
-      const data = await res.json();
+      emailjs.send(
+      'service_8lcglxj',
+      'template_qxy7u8a',      
+      formData,
+      'SemqVBr-_LhH2zuaW',
+    ).then(() => {console.log("EmailSENT");toast.success("Thank you for your message! We'll get back to you shortly.");
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    });})
+    .catch(err => alert("Error sending message"));
+    
+    
 
-      if (data.success) {
-        toast.success("Thank you! Your message has been sent.");
-        setFormData({ name: "", email: "", phone: "", message: "" });
-      } else {
-        toast.error(data.error || "Failed to send message.");
-      }
     } catch (err) {
       toast.error("Unexpected error — please try again.");
     }
